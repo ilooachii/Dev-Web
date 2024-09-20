@@ -1,0 +1,26 @@
+{
+  "name": "express-static-file-server",
+  "version": "1.0.0",
+  "description": "cours web2 TS",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilyas-dahaj-vinci/javascript2.git"
+  },
+  "author": "Ilyas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ilyas-dahaj-vinci/javascript2/issues"
+  },
+  "homepage": "https://github.com/ilyas-dahaj-vinci/javascript2#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
