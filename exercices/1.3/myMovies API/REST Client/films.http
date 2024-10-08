@@ -1,0 +1,25 @@
+### Read all movies
+@baseUrl = http://localhost:3000
+GET {{baseUrl}}/films
+
+### READ ALL FILTERED
+@baseUrl = http://localhost:3000
+GET {{baseUrl}}/films/?minimum-duration=10
+
+### READ ONE
+@baseUrl = http://localhost:3000
+GET {{baseUrl}}/films/3
+
+### Créer un nouveau film
+POST http://localhost:3000/films
+Content-Type: application/json
+
+{
+  "id": 4,
+  "title": "Nouveau Film",
+  "director": "Réalisateur 4",
+  "duration": 140,
+  "budget": 15,
+  "description": "Un autre super film",
+  "imageUrl": "http://image.com/4"
+}
