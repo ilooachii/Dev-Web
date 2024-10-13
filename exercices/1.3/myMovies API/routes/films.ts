@@ -25,13 +25,46 @@ const films: Film[] = [
 ];
 
 router.get("/", (req, res) => {
-  const minDuration = Number(req.query['minimum-duration']);
-  if (!minDuration || minDuration <=0) {
-    res.status(400).json({ error: 'Wrong minimum duration' });
+  const { page = 1, limit = 10, sortBy, order = 'asc', title } = req.query;
+
+  // Filtrage
+  let filteredFilms = films;
+  if (title && typeof title === 'string') {
+    filteredFilms = films.filter(film => 
+      film.title.toLowerCase().includes(title.toLowerCase())
+    );
   }
 
-  const filteredFilms = films.filter(film => film.duration >= minDuration);
-  res.json(filteredFilms);
+  // Tri
+  if (sortBy && typeof sortBy === 'string' && ['title', 'duration', 'budget'].includes(sortBy)) {
+    filteredFilms.sort((a, b) => {
+      const fieldA = a[sortBy as keyof typeof a] || '';  // Si undefined, utiliser une valeur par défaut
+      const fieldB = b[sortBy as keyof typeof b] || '';
+  
+      if (order === 'asc') {
+        return fieldA > fieldB ? 1 : -1;
+      } else {
+        return fieldA < fieldB ? 1 : -1;
+      }
+    });
+  }
+
+  // Pagination
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+  const startIndex = (pageNumber - 1) * limitNumber;
+  const endIndex = pageNumber * limitNumber;
+  const paginatedFilms = filteredFilms.slice(startIndex, endIndex);
+
+  // Résultat final avec informations sur la pagination
+  const result = {
+    currentPage: pageNumber,
+    totalItems: filteredFilms.length,
+    totalPages: Math.ceil(filteredFilms.length / limitNumber),
+    data: paginatedFilms
+  };
+
+  return res.json(result);
 });
 
 router.get("/:id", (req, res) => {
