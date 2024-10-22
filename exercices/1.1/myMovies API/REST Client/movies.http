@@ -1,0 +1,2 @@
+### Read all movies
+GET http://localhost:3000/movies

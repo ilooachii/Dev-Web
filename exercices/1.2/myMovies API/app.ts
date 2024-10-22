@@ -1,23 +1,24 @@
-import express, { RequestHandler } from "express";
+import express from "express";
+import { requestCounterMiddleware } from "./utils/requestCounter";
 
-import filmsRouter from "./routes/films";
+import movieRouter from "./routes/movies";
 
 const app = express();
-
-let getRequestCounter = 0;
-
-const countGetRequests: RequestHandler = (req, _res, next) => {
-  if (req.method === "GET") {
-    getRequestCounter++;
-    console.log(`GET counter: ${getRequestCounter}`);
-  }
-  next(); // Passe au middleware suivant ou à la route
-};
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/films", filmsRouter);
-app.use(countGetRequests);
+app.use("/movies", movieRouter);
+app.use(requestCounterMiddleware);
+
+let getCounter = 0;
+app.use((req, _res, next) => {
+    if(req.method === 'GET') {
+        getCounter++;
+        console.log(`GET counter : ${getCounter}`);
+    }
+    next();
+});
+
 
 export default app;
