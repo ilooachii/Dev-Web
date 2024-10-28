@@ -52,8 +52,18 @@ const defaultMovies: Movie[] = [
   },
 ];
 
-router.get("/", (_req, res) => {
-  res.json(defaultMovies);
+router.get("/", (req, res) => {
+  if (!req.query["minimum-duration"]) {
+    return res.json(defaultMovies);
+  }
+  const dureeMin = Number(req.query["minimum-duration"]);
+  if (isNaN(dureeMin) || dureeMin <= 0) {
+    return res.json("Wrong Minimum Duration");
+  }
+  const filteredMoviesByDuration = defaultMovies.filter((movie) => {
+    return movie.duration >= dureeMin;
+  });
+  return res.json(filteredMoviesByDuration);
 });
 
 router.post("/", (req, res) => {
@@ -88,8 +98,7 @@ router.post("/", (req, res) => {
   const nextId =
     defaultMovies.reduce(
       (maxId, movie) => (movie.id > maxId ? movie.id : maxId),
-      0
-    ) + 1;
+      0) + 1;
 
   const addedMovie: Movie = {
     id: nextId,
@@ -98,6 +107,18 @@ router.post("/", (req, res) => {
 
   defaultMovies.push(addedMovie);
   return res.json(addedMovie);
+});
+
+router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  if (isNaN(id) || id < 1) {
+    return res.json("Wrong ID");
+  }
+  const movie = defaultMovies.find((movie) => movie.id === id);
+  if (!movie) {
+    return res.sendStatus(404);
+  }
+  return res.json(movie);
 });
 
 export default router;
