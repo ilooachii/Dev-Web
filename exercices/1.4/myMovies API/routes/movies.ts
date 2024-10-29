@@ -1,8 +1,6 @@
 import express from "express";
 
 import { Movie, NewMovie } from "../types";
-import { filterMoviesByAttribute } from "../utils/filterMovies";
-import { paginateMovies } from "../utils/pagination";
 
 const router = express.Router();
 
@@ -55,54 +53,17 @@ const defaultMovies: Movie[] = [
 ];
 
 router.get("/", (req, res) => {
-  const minDuration = req.query["minimum-duration"];
-  const startsWith = req.query["startsWith"];
-  const director = req.query["director"];
-  const minBudget = req.query["minimum-budget"];
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 10;
-
-  let filteredMovies = defaultMovies;
-
-  // Filtre par durée minimale
-  if (minDuration) {
-    const dureeMin = Number(minDuration);
-    if (isNaN(dureeMin) || dureeMin <= 0) {
-      return res.json("Wrong Minimum Duration");
-    }
-    filteredMovies = filteredMovies.filter((movie) => movie.duration >= dureeMin);
+  if (!req.query["minimum-duration"]) {
+    return res.json(defaultMovies);
   }
-
-  // Filtre par titre
-  if (startsWith) {
-    filteredMovies = filterMoviesByAttribute(filteredMovies, "title", startsWith);
+  const dureeMin = Number(req.query["minimum-duration"]);
+  if (isNaN(dureeMin) || dureeMin <= 0) {
+    return res.json("Wrong Minimum Duration");
   }
-
-  // Filtre par directeur
-  if (director) {
-    filteredMovies = filterMoviesByAttribute(filteredMovies, "director", director);
-  }
-
-  // Filtre par budget minimum
-  if (minBudget) {
-    const budgetMin = Number(minBudget);
-    if (isNaN(budgetMin) || budgetMin <= 0) {
-      return res.json("Wrong Minimum Budget");
-    }
-    filteredMovies = filteredMovies.filter((movie) => movie.budget !== undefined && movie.budget >= budgetMin);
-  
-    // Vérification si aucun film n'a été trouvé après le filtre
-  }
-
-  filteredMovies = paginateMovies(filteredMovies, page, limit); // Application de la pagination
-
-
-  return res.json({
-    currentPage: page,
-    totalPages: Math.ceil(filteredMovies.length / limit),
-    totalMovies: filteredMovies.length,
-    movies: filteredMovies,
+  const filteredMoviesByDuration = defaultMovies.filter((movie) => {
+    return movie.duration >= dureeMin;
   });
+  return res.json(filteredMoviesByDuration);
 });
 
 router.post("/", (req, res) => {
@@ -137,8 +98,7 @@ router.post("/", (req, res) => {
   const nextId =
     defaultMovies.reduce(
       (maxId, movie) => (movie.id > maxId ? movie.id : maxId),
-      0
-    ) + 1;
+      0) + 1;
 
   const addedMovie: Movie = {
     id: nextId,

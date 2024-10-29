@@ -6,3 +6,58 @@ GET http://localhost:3000/movies?minimum-duration=150
 
 ### Read the movie with the id filter
 GET http://localhost:3000/movies/3
+
+### Post a movie
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "director": "Christopher Nolan",
+  "duration": 148,
+  "budget": 160,
+  "description": "Un film de science-fiction explorant les rêves et la réalité.",
+  "imageUrl": "https://example.com/inception.jpg"
+}
+
+### Filtrer les films dont le titre commence par une certaine chaîne de caractères
+GET http://localhost:3000/movies?startsWith=in
+
+### Filtre par durée minimale
+GET http://localhost:3000/movies?minimum-duration=150
+
+### Filtre par début du titre
+GET http://localhost:3000/movies?startsWith=The
+
+### Filtre par nom du directeur
+GET http://localhost:3000/movies?director=Christopher
+
+### Filtre par budget minimum
+GET http://localhost:3000/movies?minimum-budget=100
+
+### Combinaison de filtres : durée minimale et titre
+GET http://localhost:3000/movies?minimum-duration=150&startsWith=inter
+
+### Combinaison de filtres : durée minimale, titre et directeur
+GET http://localhost:3000/movies?minimum-duration=120&startsWith=Inception&director=Christo
+
+### Combinaison de filtres : durée minimale, titre, directeur et budget minimum
+GET http://localhost:3000/movies?minimum-duration=100&startsWith=Avengers&director=Russo&minimum-budget=100000000
+
+### Obtenir les films avec pagination (page 1, 3 films par page)
+GET http://localhost:3000/movies?page=1&limit=3
+
+### Obtenir les films filtrés par `minimum-duration` (exemple : films de plus de 150 minutes)
+GET http://localhost:3000/movies?minimum-duration=150
+
+### Obtenir les films filtrés par `startsWith` pour les titres (exemple : titres commençant par "The")
+GET http://localhost:3000/movies?startsWith=The
+
+### Obtenir les films filtrés par `director` (exemple : réalisés par "Christopher Nolan")
+GET http://localhost:3000/movies?director=Christopher%20Nolan
+
+### Obtenir les films filtrés par `minimum-budget` (exemple : films avec un budget supérieur à 100 millions)
+GET http://localhost:3000/movies?minimum-budget=100
+
+### Requête combinée pour obtenir les films avec plusieurs filtres et pagination
+GET http://localhost:3000/movies?director=Christopher%20Nolan&minimum-duration=150&minimum-budget=100&page=1&limit=3
