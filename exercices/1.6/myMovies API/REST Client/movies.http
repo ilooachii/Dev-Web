@@ -12,8 +12,8 @@ POST http://localhost:3000/movies
 Content-Type: application/json
 
 {
-  "title": "Inception",
-  "director": "Christopher Nolan",
+  "title": "ZZzzzz",
+  "director": "Christopher Hakim",
   "duration": 148,
   "budget": 160,
   "description": "Un film de science-fiction explorant les rêves et la réalité.",
@@ -51,7 +51,7 @@ GET http://localhost:3000/movies?page=1&limit=3
 GET http://localhost:3000/movies?minimum-duration=150
 
 ### Obtenir les films filtrés par `startsWith` pour les titres (exemple : titres commençant par "The")
-GET http://localhost:3000/movies?startsWith=The
+GET http://localhost:3000/movies?startsWith=the
 
 ### Obtenir les films filtrés par `director` (exemple : réalisés par "Christopher Nolan")
 GET http://localhost:3000/movies?director=Christopher%20Nolan
@@ -61,3 +61,27 @@ GET http://localhost:3000/movies?minimum-budget=100
 
 ### Requête combinée pour obtenir les films avec plusieurs filtres et pagination
 GET http://localhost:3000/movies?director=Christopher%20Nolan&minimum-duration=150&minimum-budget=100&page=1&limit=3
+
+### DELETE un film par ID
+DELETE http://localhost:3000/movies/1
+
+### PATCH un film par ID
+PATCH http://localhost:3000/movies/2
+Content-Type: application/json
+
+{
+  "duration": 170
+}
+
+### PUT pour remplacer ou créer un film
+PUT http://localhost:3000/movies/3
+Content-Type: application/json
+
+{
+  "title": "The Dark Knight",
+  "director": "Christopher Nolan",
+  "duration": 152,
+  "budget": 185,
+  "description": "Batman contre Riddler",
+  "imageUrl": "https://example.com/darkknight.jpg"
+}

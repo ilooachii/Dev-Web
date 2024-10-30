@@ -1,5 +1,4 @@
 import express from "express";
-
 import { Movie, NewMovie } from "../types";
 import { filterMoviesByAttribute } from "../utils/filterMovies";
 import { paginateMovies } from "../utils/pagination";
@@ -54,6 +53,7 @@ const defaultMovies: Movie[] = [
   },
 ];
 
+// GET /films - Lecture de tous les films avec filtrage et pagination
 router.get("/", (req, res) => {
   const minDuration = req.query["minimum-duration"];
   const startsWith = req.query["startsWith"];
@@ -68,34 +68,42 @@ router.get("/", (req, res) => {
   if (minDuration) {
     const dureeMin = Number(minDuration);
     if (isNaN(dureeMin) || dureeMin <= 0) {
-      return res.json("Wrong Minimum Duration");
+      return res.status(400).json({ error: "Durée minimale invalide" });
     }
-    filteredMovies = filteredMovies.filter((movie) => movie.duration >= dureeMin);
+    filteredMovies = filteredMovies.filter(
+      (movie) => movie.duration >= dureeMin
+    );
   }
 
   // Filtre par titre
   if (startsWith) {
-    filteredMovies = filterMoviesByAttribute(filteredMovies, "title", startsWith);
+    filteredMovies = filterMoviesByAttribute(
+      filteredMovies,
+      "title",
+      startsWith
+    );
   }
 
   // Filtre par directeur
   if (director) {
-    filteredMovies = filterMoviesByAttribute(filteredMovies, "director", director);
+    filteredMovies = filterMoviesByAttribute(
+      filteredMovies,
+      "director",
+      director
+    );
   }
 
   // Filtre par budget minimum
   if (minBudget) {
     const budgetMin = Number(minBudget);
     if (isNaN(budgetMin) || budgetMin <= 0) {
-      return res.json("Wrong Minimum Budget");
+      return res.status(400).json({ error: "Budget minimum invalide" });
     }
     filteredMovies = filteredMovies.filter((movie) => movie.budget !== undefined && movie.budget >= budgetMin);
-  
-    // Vérification si aucun film n'a été trouvé après le filtre
   }
 
-  filteredMovies = paginateMovies(filteredMovies, page, limit); // Application de la pagination
-
+  // Pagination
+  filteredMovies = paginateMovies(filteredMovies, page, limit);
 
   return res.json({
     currentPage: page,
@@ -105,8 +113,26 @@ router.get("/", (req, res) => {
   });
 });
 
+// GET /films/:id - Lecture d'un film par ID
+router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  if (isNaN(id) || id < 1) {
+    return res.status(400).json({ error: "ID invalide" });
+  }
+
+  const movie = defaultMovies.find((movie) => movie.id === id);
+  if (!movie) {
+    return res.status(404).json({ error: "Film non trouvé" });
+  }
+
+  return res.json(movie);
+});
+
+// POST /films - Création d'un film
 router.post("/", (req, res) => {
   const body: unknown = req.body;
+
+  // Validation des données reçues
   if (
     !body ||
     typeof body !== "object" ||
@@ -129,11 +155,21 @@ router.post("/", (req, res) => {
     body.duration <= 0 ||
     body.budget <= 0
   ) {
-    return res.sendStatus(400);
+    return res.status(400).json({ error: "Données de film invalides" });
   }
 
   const newMovie = body as NewMovie;
 
+  // Vérification si le film existe déjà
+  const movieExists = defaultMovies.some(
+    (movie) =>
+      movie.title === newMovie.title && movie.director === newMovie.director
+  );
+  if (movieExists) {
+    return res.status(409).json({ error: "Film déjà existant" });
+  }
+
+  // Création du film
   const nextId =
     defaultMovies.reduce(
       (maxId, movie) => (movie.id > maxId ? movie.id : maxId),
@@ -146,19 +182,7 @@ router.post("/", (req, res) => {
   };
 
   defaultMovies.push(addedMovie);
-  return res.json(addedMovie);
-});
-
-router.get("/:id", (req, res) => {
-  const id = Number(req.params.id);
-  if (isNaN(id) || id < 1) {
-    return res.json("Wrong ID");
-  }
-  const movie = defaultMovies.find((movie) => movie.id === id);
-  if (!movie) {
-    return res.sendStatus(404);
-  }
-  return res.json(movie);
+  return res.status(201).json(addedMovie);
 });
 
 export default router;

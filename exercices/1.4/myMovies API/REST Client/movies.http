@@ -1,8 +1,0 @@
-### Read all movies
-GET http://localhost:3000/movies
-
-### Read all movies with a minimum duration filter
-GET http://localhost:3000/movies?minimum-duration=150
-
-### Read the movie with the id filter
-GET http://localhost:3000/movies/3
