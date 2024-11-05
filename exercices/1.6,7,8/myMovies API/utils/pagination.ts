@@ -1,3 +1,4 @@
+import { Movie } from "../types";
 /**
  * Applique la pagination sur une liste de films.
  * @param {Array} movies - La liste des films à paginer.
@@ -5,7 +6,7 @@
  * @param {number} limit - Le nombre de films par page.
  * @returns {Array} - La portion de films correspondant à la page demandée.
  */
-function paginateMovies(movies: any[], page: number, limit: number): Array<any> {
+function paginateMovies(movies:Movie [], page: number, limit: number): Array<Movie> {
     if (!page || page < 1) {
       page = 1;
     }
