@@ -1,4 +1,7 @@
 import express from "express";
+import path from "node:path";
+import { parse, serialize } from "../utils/json";
+const jsonDbPath = path.join(__dirname, "/../data/movies.json");
 import { Movie, NewMovie } from "../types";
 import { filterMoviesByAttribute } from "../utils/filterMovies";
 import { paginateMovies } from "../utils/pagination";
@@ -62,7 +65,7 @@ router.get("/", (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
 
-  let filteredMovies = defaultMovies;
+  let filteredMovies = parse(jsonDbPath, defaultMovies);
 
   // Filtre par durée minimale
   if (minDuration) {
@@ -122,7 +125,8 @@ router.get("/:id", (req, res) => {
     return res.status(400).json({ error: "ID invalide" });
   }
 
-  const movie = defaultMovies.find((movie) => movie.id === id);
+  const movies = parse(jsonDbPath, defaultMovies);
+  const movie = movies.find((movie) => movie.id === id);
   if (!movie) {
     return res.status(404).json({ error: "Film non trouvé" });
   }
@@ -172,8 +176,9 @@ router.post("/", (req, res) => {
   }
 
   // Création du film
+  const movies = parse(jsonDbPath, defaultMovies);
   const nextId =
-    defaultMovies.reduce(
+    movies.reduce(
       (maxId, movie) => (movie.id > maxId ? movie.id : maxId),
       0
     ) + 1;
@@ -183,7 +188,8 @@ router.post("/", (req, res) => {
     ...newMovie,
   };
 
-  defaultMovies.push(addedMovie);
+  movies.push(addedMovie);
+  serialize(jsonDbPath, movies);
   return res.status(201).json(addedMovie);
 });
 
@@ -194,12 +200,13 @@ router.delete("/:id", (req, res) => {
     return res.status(400).json({ error: "ID invalide" });
   }
 
-  const index = defaultMovies.findIndex((movie) => movie.id === id);
+  const movies = parse(jsonDbPath, defaultMovies);
+  const index = movies.findIndex((movie) => movie.id === id);
   if (index === -1) {
     return res.status(404).json({ error: "Film non trouvé" });
   }
 
-  defaultMovies.splice(index, 1);
+  movies.splice(index, 1);
   return res.status(204).end(); // Pas de contenu, opération réussie
 });
 
@@ -210,7 +217,8 @@ router.patch("/:id", (req, res) => {
     return res.status(400).json({ error: "ID invalide" });
   }
 
-  const movie = defaultMovies.find((movie) => movie.id === id);
+  const movies = parse(jsonDbPath, defaultMovies);
+  const movie = movies.find((movie) => movie.id === id);
   if (!movie) {
     return res.status(404).json({ error: "Film non trouvé" });
   }
@@ -236,6 +244,7 @@ router.patch("/:id", (req, res) => {
   if (description) movie.description = description;
   if (imageUrl) movie.imageUrl = imageUrl;
 
+  serialize(jsonDbPath, movies);
   return res.json(movie);
 });
 
@@ -262,7 +271,8 @@ router.put("/:id", (req, res) => {
     return res.status(400).json({ error: "Données de film invalides" });
   }
 
-  const movieIndex = defaultMovies.findIndex((movie) => movie.id === id);
+  const movies = parse(jsonDbPath, defaultMovies);
+  const movieIndex = movies.findIndex((movie) => movie.id === id);
 
   const newMovie: Movie = {
     id,
@@ -275,11 +285,11 @@ router.put("/:id", (req, res) => {
   };
 
   if (movieIndex === -1) {
-    defaultMovies.push(newMovie);
+    movies.push(newMovie);
     return res.status(201).json(newMovie); // Création réussie
   }
 
-  defaultMovies[movieIndex] = newMovie;
+  movies[movieIndex] = newMovie;
   return res.json(newMovie);
 });
 
