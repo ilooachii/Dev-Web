@@ -1,0 +1,33 @@
+### Get all texts
+GET http://localhost:3000/texts
+Content-Type: application/json
+
+### Get all texts filtered by level (example: easy)
+GET http://localhost:3000/texts?level=easy
+Content-Type: application/json
+
+### Get a single text by ID (exemple avec un ID fictif)
+GET http://localhost:3000/texts/123e4567-e89b-12d3-a456-426614174000
+Content-Type: application/json
+
+### Create a new text
+POST http://localhost:3000/texts
+Content-Type: application/json
+
+{
+  "content": "Ceci est un exemple de texte à dactylographier.",
+  "level": "medium"
+}
+
+### Update a text by ID (exemple avec un ID fictif)
+PUT http://localhost:3000/texts/123e4567-e89b-12d3-a456-426614174000
+Content-Type: application/json
+
+{
+  "content": "Texte mis à jour.",
+  "level": "hard"
+}
+
+### Delete a text by ID (exemple avec un ID fictif)
+DELETE http://localhost:3000/texts/c40de03e-fce0-44db-a1e7-9b73175d8c3a
+Content-Type: application/json
