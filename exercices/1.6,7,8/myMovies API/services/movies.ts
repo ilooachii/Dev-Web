@@ -8,12 +8,19 @@ const jsonDbPath = path.join(__dirname, "/../data/movies.json");
 const defaultMovies: Movie[] = [
 ];
 
-function getAllMovies(filters: any, page: number, limit: number): { movies: Movie[]; total: number } {
+interface MovieFilters {
+  minDuration?: number;
+  startsWith?: string;
+  director?: string;
+  minBudget?: number;
+}
+
+function getAllMovies(filters: MovieFilters, page: number, limit: number): { movies: Movie[]; total: number } {
   let movies = parse(jsonDbPath, defaultMovies);
 
   // Application des filtres
   if (filters.minDuration) {
-    movies = movies.filter((movie) => movie.duration >= filters.minDuration);
+    movies = movies.filter((movie) => movie.duration >= (filters.minDuration ?? 0));
   }
   if (filters.startsWith) {
     movies = filterMoviesByAttribute(movies, "title", filters.startsWith);
@@ -22,7 +29,7 @@ function getAllMovies(filters: any, page: number, limit: number): { movies: Movi
     movies = filterMoviesByAttribute(movies, "director", filters.director);
   }
   if (filters.minBudget) {
-    movies = movies.filter((movie) => movie.budget !== undefined && movie.budget >= filters.minBudget);
+    movies = movies.filter((movie) => movie.budget !== undefined && movie.budget >= (filters.minBudget ?? 0));
   }
 
   // Pagination
