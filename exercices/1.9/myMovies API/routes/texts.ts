@@ -31,11 +31,18 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
   const { content, level } = req.body;
-  if (!content || !['easy', 'medium', 'hard'].includes(level)) {
+
+  // Validation des données
+  if (!content || typeof content !== 'string' || !['easy', 'medium', 'hard'].includes(level)) {
     return res.status(400).json({ message: "Données invalides" });
   }
-  const newText = createOne(content, level);
-  return res.status(201).json(newText);
+
+  // Création d'un nouvel objet `NewText` et appel de la fonction `createOne`
+  const newText = { content, level };
+  const createdText = createOne(newText);
+
+  // Réponse avec le nouvel objet créé
+  return res.status(201).json(createdText);
 });
 
 router.delete("/:id", (req, res) => {

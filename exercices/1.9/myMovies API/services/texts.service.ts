@@ -1,6 +1,6 @@
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { TypingText } from "../types";
+import { TypingText, NewText } from "../types";
 import { parse, serialize } from "../utils/json";
 
 const jsonDbPath = path.join(__dirname, "../data/texts.json");
@@ -37,16 +37,18 @@ export const readOne = (id: string): TypingText | undefined => {
   return texts.find(text => text.id === id);
 };
 
-export const createOne = (content: string, level: 'easy' | 'medium' | 'hard'): TypingText => {
-  const texts = parse<TypingText>(jsonDbPath, defaultTexts);
-  const newText: TypingText = {
-    id: uuidv4(),
-    content,
-    level,
+export const createOne = (newText: NewText): TypingText => {
+  const texts = parse<TypingText>(jsonDbPath, []);
+  
+  const createdText: TypingText = {
+    id: uuidv4(), // Génération de l'ID unique
+    content: newText.content, // Inclusion de la propriété `content`
+    level: newText.level // Inclusion de la propriété `level`
   };
-  texts.push(newText);
+
+  texts.push(createdText);
   serialize(jsonDbPath, texts);
-  return newText;
+  return createdText;
 };
 
 export const deleteOne = (id: string): void => {

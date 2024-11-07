@@ -4,4 +4,6 @@ interface TypingText {
   level: 'easy' | 'medium' | 'hard'; // niveau associé au texte, valeurs autorisées
 }
 
-export type { TypingText };
+type NewText = Omit<TypingText, "id">;
+
+export type { TypingText, NewText };

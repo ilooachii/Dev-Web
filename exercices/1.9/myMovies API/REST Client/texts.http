@@ -3,7 +3,7 @@ GET http://localhost:3000/texts
 Content-Type: application/json
 
 ### Get all texts filtered by level (example: easy)
-GET http://localhost:3000/texts?level=easy
+GET http://localhost:3000/texts?level=medium
 Content-Type: application/json
 
 ### Get a single text by ID (exemple avec un ID fictif)
@@ -29,5 +29,5 @@ Content-Type: application/json
 }
 
 ### Delete a text by ID (exemple avec un ID fictif)
-DELETE http://localhost:3000/texts/c40de03e-fce0-44db-a1e7-9b73175d8c3a
+DELETE http://localhost:3000/texts/c7591f64-6769-4e7f-b67b-758d2822fd32
 Content-Type: application/json
