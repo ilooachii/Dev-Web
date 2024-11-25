@@ -1,0 +1,16 @@
+.user-card h2 {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.user-card p:nth-child(2) {
+    margin-top: 10px;
+}
+
+.user-card--offline {
+    color: red;
+}
+
+.user-card--online {
+    color: green;
+}
