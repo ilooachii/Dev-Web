@@ -7,6 +7,8 @@ import {
   deleteOne,
   updateOne
 } from "../services/texts.service";
+import { NewText } from "../types";
+
 
 const router = express.Router();
 
@@ -30,33 +32,45 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { content, level } = req.body;
-
-  // Validation des données
-  if (!content || typeof content !== 'string' || !['easy', 'medium', 'hard'].includes(level)) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("content" in body) ||
+    !("level" in body) ||
+    typeof (body as NewText).content !== "string" ||
+    !['easy', 'medium', 'hard'].includes((body as NewText).level)
+  ) {
     return res.status(400).json({ message: "Données invalides" });
   }
 
-  // Création d'un nouvel objet `NewText` et appel de la fonction `createOne`
-  const newText = { content, level };
-  const createdText = createOne(newText);
+  const { content, level } = body as NewText;
+  const createdText = createOne({ content, level });
 
-  // Réponse avec le nouvel objet créé
   return res.status(201).json(createdText);
 });
 
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
   deleteOne(id);
-  res.status(204).send();
+  res.status(204).end();
 });
 
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { content, level } = req.body;
-  if (!content || !['easy', 'medium', 'hard'].includes(level)) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("content" in body) ||
+    !("level" in body) ||
+    typeof (body as NewText).content !== "string" ||
+    !['easy', 'medium', 'hard'].includes((body as NewText).level)
+  ) {
     return res.status(400).json({ message: "Données invalides" });
   }
+
+  const { content, level } = body as NewText;
   const updatedText = updateOne(id, content, level);
   if (updatedText) {
     return res.json(updatedText);
