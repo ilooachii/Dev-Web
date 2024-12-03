@@ -2,15 +2,11 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import ClickCounter from './ClickCounter'
-import { useState } from 'react';
 
-interface AppProps {
-  title: string;
-  message: string;
-}
-
-function App({ title, message }: AppProps) {
-  const [count, setCount] = useState(0);
+function App() {
+  const title = "Click Counter";
+  const message = "You are a master in the art of clicking!";
+  const hoverMessage = "Please click on me now!";
 
   return (
     <>
@@ -22,9 +18,8 @@ function App({ title, message }: AppProps) {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>{title}</h1>
-      <ClickCounter title={"Full counter"} message={"You are a master in the art of clicking !"} />
-      {count >= 10 && <p>{message}</p>}
+      <h1>Vite + React</h1>
+      <ClickCounter title={title} message={message} hoverMessage={hoverMessage} />
       <p>
         Edit <code>src/App.tsx</code> and save to test HMR
       </p>
